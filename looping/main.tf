@@ -1,25 +1,31 @@
 /*
-Given a list of names, converts the names to uppercase.
-Solution: use Terraform's for expression.
-SYNTAX: [for <ITEM> in <LIST> : <OUTPUT>]
-  LIST: the list to loop over
-  ITEM: the local variable name assign to each item item in LIST
-  OUTPUT: is an expression that transforms ITEM in some way 
+With for expression, you can loop over a variable containing map item(s): key/value pairs
+
+SYNTAX: [for <KEY>, <VALUE> in <MAP> : <OUTPUT>]
 */
 
-//here is the list of names
-variable "names" {
-  description = "A list of names"
-  type        = list(string)
-  default     = ["neo", "trinity", "morpheus"]
+//variable of type map
+variable "hero_thousand_faces" {
+  description = "map"
+  type        = map(string)
+  default = {
+    neo      = "hero"
+    trinity  = "love interest"
+    morpheus = "mentor"
+  }
 }
 
-//user for expression to change all items to upper case
-output "upper_names" {
-  value = [for name in var.names : upper(name)]
+//here is the ouput
+output "bios" {
+  value = [for name, role in var.hero_thousand_faces : "${name} is the ${role}"]
 }
 
-//You can also filter the resulting list by secifying a condition:
-output "short_upper_names" {
-  value = [for name in var.names : upper(name) if length(name) < 5]
+//
+//You can also use for expression to output a map rather than a list.
+//using the following syntax
+//SYNTAX: {for <KEY>, <VALUE> in <MAP> : <OUTPUT_KEY => <OUTPUT_VALUE>}
+
+//transforming a map to make all the keys and values uppercase
+output "upper_roles" {
+  value = { for name, role in var.hero_thousand_faces : upper(name) => upper(role) }
 }
